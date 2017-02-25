@@ -1,0 +1,23 @@
+app:
+    image: million12/nginx-php:php70
+    container_name: notyes-nginx-php7
+    restart: always
+    volumes:
+        - ./public_html/:/data/www/default
+        - ./config/hosts.d/:/etc/nginx/hosts.d/
+        - ./config/11-nginx-dirs.sh:/config/init/11-nginx-dirs.sh
+mariadb:
+    image: mariadb:10
+    container_name: mariadb
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./database/config/data:/var/lib/mysql
+    environment:
+      - TERM=xterm-256color
+      - MYSQL_ROOT_PASSWORD=uNkKn9TN6PtWJCwcDP7xZMaeiRQ
+      - MYSQL_DATABASE=register_page
+      - MYSQL_USER=the_register
+      - MYSQL_PASSWORD=uNkKn9TN6PtWJCwcDP7xZMaeiRQ
