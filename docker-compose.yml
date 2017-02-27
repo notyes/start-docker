@@ -1,23 +1,43 @@
-app:
+version: '2'
+
+services:
+  nginx:
     image: million12/nginx-php:php70
-    container_name: notyes-nginx-php7
-    restart: always
-    volumes:
-        - ./public_html/:/data/www/default
-        - ./config/hosts.d/:/etc/nginx/hosts.d/
-        - ./config/11-nginx-dirs.sh:/config/init/11-nginx-dirs.sh
-mariadb:
-    image: mariadb:10
-    container_name: mariadb
-    restart: always
+    environment:
+      - TZ=Asia/Bangkok
+      - TERM=xterm-256color
     ports:
-      - 3306:3306
+      - 80:80
+    restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime
-      - ./database/config/data:/var/lib/mysql
+      - ./public_html:/data/www/default
+      - ./config/hosts.d/:/etc/nginx/hosts.d/
+      - ./config/11-nginx-dirs.sh:/config/init/11-nginx-dirs.sh:ro
+    working_dir: /data/www/default
+  mysql:
+    restart: unless-stopped
+    image: mariadb:10
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - ./database:/var/lib/mysql
+    ports:
+      - 3306:3306
     environment:
+      - TZ=Asia/Bangkok
       - TERM=xterm-256color
-      - MYSQL_ROOT_PASSWORD=uNkKn9TN6PtWJCwcDP7xZMaeiRQ
-      - MYSQL_DATABASE=register_page
-      - MYSQL_USER=the_register
-      - MYSQL_PASSWORD=uNkKn9TN6PtWJCwcDP7xZMaeiRQ
+      - MYSQL_ROOT_PASSWORD=RFVujm123@
+      - MYSQL_DATABASE=event_register
+      - MYSQL_USER=event_register
+      - MYSQL_PASSWORD=RFVujm123@
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    environment:
+      - TZ=Asia/Bangkok
+      - PMA_HOSTS=mysql
+      - PMA_USER=event_register
+      - PMA_PASSWORD=RFVujm123@
+      - PHP_UPLOAD_MAX_FILESIZE=64M
